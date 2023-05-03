@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/webjars/bootstrap/5.1.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        /* 회원가입 폼 스타일 */
+        .signup-form {
+            width: 100%;
+            max-width: 330px;
+            padding: 15px;
+            margin: 0 auto;
+        }
+        .signup-form .form-floating {
+            margin-bottom: 10px;
+        }
+        .signup-form .form-floating input {
+            height: auto;
+        }
+        .signup-form .form-floating label {
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="topbar :: topbar"></div>
+<div class="container">
+    <form class="signup-form" th:action="@{/user/signup}" th:object="${registerRequest}" method="post">
+        <h1 class="h3 mb-3 fw-normal">회원가입</h1>
+        <div class="form-floating">
+            <input type="text" class="form-control" id="username" placeholder="아이디" th:field="*{name}" />
+            <label for="username">이름</label>
+        </div>
+        <div class="form-floating">
+            <input type="email" class="form-control" id="email" placeholder="이메일" th:field="*{email}" />
+            <label for="email">이메일</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control" id="password" placeholder="비밀번호" th:field="*{password}" />
+            <label for="password">비밀번호</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control" id="password-confirm" placeholder="비밀번호 확인" th:field="*{passwordConfirm}" />
+            <label for="password-confirm">비밀번호 확인</label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">가입하기</button>
+    </form>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="/webjars/bootstrap/5.1.0/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
