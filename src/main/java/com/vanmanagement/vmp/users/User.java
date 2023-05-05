@@ -1,6 +1,9 @@
 package com.vanmanagement.vmp.users;
 
 import com.vanmanagement.vmp.security.Jwt;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,21 +19,22 @@ import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
-    private final Long seq;
+    private Long seq;
 
-    private final String name;
+    private String name;
 
-    private final String email;
-
-    private String password;
+    private String email;
 
     private int loginCount;
 
     private LocalDateTime lastLoginAt;
 
-    private final LocalDateTime createAt;
+    private LocalDateTime createAt;
 
     public User(String name, String email, String password) {
         this(null, name, email, password, 0, null, null);
@@ -41,7 +45,6 @@ public class User {
         this.seq = seq;
         this.name = name;
         this.email = email;
-        this.password = password;
         this.loginCount = loginCount;
         this.lastLoginAt = lastLoginAt;
         this.createAt = defaultIfNull(createAt, now());
@@ -51,7 +54,6 @@ public class User {
         this.seq = userEntity.getSeq();
         this.email = userEntity.getEmail();
         this.name = userEntity.getName();
-        this.password = userEntity.getPassword();
         this.lastLoginAt = userEntity.getLastLoginAt();
         this.createAt = userEntity.getCreateAt();
     }
@@ -61,44 +63,11 @@ public class User {
         return jwt.create(claims);
     }
 
-    public void login(PasswordEncoder passwordEncoder, String credentials) {
-        if (!passwordEncoder.matches(credentials, password)) {
-            throw new IllegalArgumentException("Bad credential");
-        }
-    }
-
     public void afterLoginSuccess() {
         loginCount++;
         lastLoginAt = now();
     }
 
-    public Long getSeq() {
-        return seq;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public int getLoginCount() {
-        return loginCount;
-    }
-
-    public Optional<LocalDateTime> getLastLoginAt() {
-        return ofNullable(lastLoginAt);
-    }
-
-    public LocalDateTime getCreateAt() {
-        return createAt;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -119,7 +88,6 @@ public class User {
                 .append("seq", seq)
                 .append("name", name)
                 .append("email", email)
-                .append("password", "[PROTECTED]")
                 .append("loginCount", loginCount)
                 .append("lastLoginAt", lastLoginAt)
                 .append("createAt", createAt)

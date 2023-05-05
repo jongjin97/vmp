@@ -1,24 +1,12 @@
 package com.vanmanagement.vmp.users;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import com.vanmanagement.vmp.errors.AccountAlreadyExistsException;
+import com.vanmanagement.vmp.errors.NotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @Service
 public class UserService {
@@ -32,12 +20,13 @@ public class UserService {
     }
 
     @Transactional
-    public User login(String email, String password) {
+    public UserEntity login(String email, String password) {
+        UserEntity userEntity = findByEmail(email).orElseThrow(() ->
+                new NotFoundException("Could not found user for " + email));
+        if(!passwordEncoder.matches(password, userEntity.getPassword()))
+            throw new IllegalArgumentException("Bad Password");
 
-        Optional<UserEntity> userEntity = findByEmail(email);
-        User user = userEntity.map(User::new).get();
-        user.login(passwordEncoder, password);
-        return user;
+        return userEntity;
     }
 
     @Transactional(readOnly = true)
@@ -51,13 +40,17 @@ public class UserService {
     }
 
     @Transactional
-    public void saveUser(RegisterRequest registerRequest){
+    public Optional<UserEntity> saveUser(RegisterRequest registerRequest){
+        Optional<UserEntity> users = findByEmail(registerRequest.getEmail());
+        if(users.isPresent())
+            throw new AccountAlreadyExistsException(registerRequest.getEmail() + " Account already exists");
+
         UserEntity userEntity = registerRequest.toEntity();
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         userEntity.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        UserEntity savedUserEntity = userRepository.save(userEntity);
+        Optional<UserEntity> savedUserEntity = Optional.ofNullable(userRepository.save(userEntity));
 
+        return savedUserEntity;
     }
 //    @Override
 //    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

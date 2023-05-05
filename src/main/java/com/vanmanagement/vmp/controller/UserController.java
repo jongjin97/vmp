@@ -9,6 +9,7 @@ import com.vanmanagement.vmp.users.RegisterRequest;
 import com.vanmanagement.vmp.users.User;
 import com.vanmanagement.vmp.users.UserService;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -79,10 +80,12 @@ public class UserController {
                             .map(GrantedAuthority::getAuthority)
                             .toArray(String[]::new)
             );
-            response.addHeader("VMP-AUTH", token);
-            return "main";
+            response.setHeader("Authorization", token);
+            return "redirect:/";
         } catch (AuthenticationException e) {
             throw new UnauthorizedException(e.getMessage(), e);
+        } catch (IllegalArgumentException e){
+            return "login";
         }
     }
 }

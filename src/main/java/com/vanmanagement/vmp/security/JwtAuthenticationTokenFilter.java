@@ -47,6 +47,7 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
+        // SecurityContext에 Authentication이 없는 경우 JWT 인증 토큰을 확인합니다.
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             String authorizationToken = obtainAuthorizationToken(request);
             if (authorizationToken != null) {
@@ -57,7 +58,7 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
                     Long userKey = claims.userKey;
                     String name = claims.name;
                     List<GrantedAuthority> authorities = obtainAuthorities(claims);
-
+                    // 유효한 토큰이면 JWT 인증 정보를 Authentication으로 변환하여 SecurityContext에 저장합니다.
                     if (nonNull(userKey) && isNotEmpty(name) && authorities.size() > 0) {
                         JwtAuthenticationToken authentication =
                                 new JwtAuthenticationToken(new JwtAuthentication(userKey, name), null, authorities);
@@ -72,7 +73,7 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
             log.debug("SecurityContextHolder not populated with security token, as it already contained: '{}'",
                     SecurityContextHolder.getContext().getAuthentication());
         }
-
+        // 다음 필터로 요청 처리를 전달합니다.
         chain.doFilter(request, response);
     }
 

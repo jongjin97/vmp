@@ -21,7 +21,7 @@ spring:
 
 jwt:
   token:
-    header: VMP-AUTH
+    header: Authorization
     issuer: vanmanager
     client-secret: Rel3Bjce2MajBo09qgkNgYaTuzvJe8iwnBFhsDS5
-    expiry-seconds: 0
+    expiry-seconds: 1800000

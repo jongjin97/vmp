@@ -2,6 +2,7 @@ package com.vanmanagement.vmp.security;
 
 import com.vanmanagement.vmp.users.Role;
 import com.vanmanagement.vmp.users.User;
+import com.vanmanagement.vmp.users.UserEntity;
 import com.vanmanagement.vmp.users.UserService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -34,7 +35,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private Authentication processUserAuthentication(String email, String password) {
         try {
-            User user = userService.login(email, password);
+            UserEntity user = userService.login(email, password);
             JwtAuthenticationToken authenticated =
                     new JwtAuthenticationToken(
                             new JwtAuthentication(user.getSeq(), user.getName()),

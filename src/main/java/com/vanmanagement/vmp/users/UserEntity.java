@@ -1,9 +1,9 @@
 package com.vanmanagement.vmp.users;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.NonNullApi;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Builder
+@AllArgsConstructor
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,16 +30,6 @@ public class UserEntity {
     private LocalDateTime lastLoginAt;
 
     private LocalDateTime createAt;
-
-
-    public UserEntity(Long seq, String name, String email, String password, LocalDateTime lastLoginAt, LocalDateTime createAt) {
-        this.seq = seq;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.lastLoginAt = lastLoginAt;
-        this.createAt = createAt;
-    }
 
 
 }
