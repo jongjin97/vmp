@@ -25,6 +25,10 @@ public class RegisterRequest {
     @javax.validation.constraints.Email
     private String email;
 
+    @NotNull(message = "birth must be not null")
+    @NotBlank(message = "birth must be provided")
+    private String birth;
+
     @NotNull(message = "password must be not null")
     @NotBlank(message = "password must be provided")
     private String password;
@@ -33,11 +37,29 @@ public class RegisterRequest {
     @NotBlank(message = "passwordConfirm must be provided")
     private String passwordConfirm;
 
+    @NotNull(message = "phone must be not null")
+    @NotBlank(message = "phone must be provided")
+    private String phone;
+
+    @NotNull(message = "addr must be not null")
+    @NotBlank(message = "addr must be provided")
+    private String addr;
+
+    private String extraAddr;
+
+    @NotNull(message = "postcode must be not null")
+    @NotBlank(message = "postcode must be provided")
+    private String postcode;
+
     UserEntity toEntity(){
         return UserEntity.builder().email(getEmail())
                 .name(getName())
                 .password(getPassword())
                 .createAt(LocalDateTime.now())
+                .phone(getPhone())
+                .addr(getAddr())
+                .extraAddr(getExtraAddr())
+                .postcode(getPostcode())
                 .build();
     }
 }

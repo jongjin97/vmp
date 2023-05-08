@@ -23,7 +23,17 @@ public class UserEntity {
 
     private String name;
 
+    private String birth;
+
     private String email;
+
+    private String phone;
+
+    private String addr;
+
+    private String extraAddr;
+
+    private String postcode;
 
     private String password;
 

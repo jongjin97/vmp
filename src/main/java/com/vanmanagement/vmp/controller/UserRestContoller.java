@@ -64,9 +64,11 @@ public class UserRestContoller {
                             .toArray(String[]::new)
             );
             response.setHeader("Authorization", "Bearer " + token);
+            response.setHeader("Email",  user.getEmail());
             return success(user);
         } catch (AuthenticationException e) {
             throw new UnauthorizedException(e.getMessage(), e);
         }
     }
+
 }

@@ -2,6 +2,7 @@ package com.vanmanagement.vmp.users;
 
 import com.vanmanagement.vmp.errors.AccountAlreadyExistsException;
 import com.vanmanagement.vmp.errors.NotFoundException;
+import com.vanmanagement.vmp.errors.PhoneAlreadyExistsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,12 +40,19 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<UserEntity> findByPhone(String phone) {
+        return userRepository.findByPhone(phone);
+    }
+
     @Transactional
     public Optional<UserEntity> saveUser(RegisterRequest registerRequest){
         Optional<UserEntity> users = findByEmail(registerRequest.getEmail());
         if(users.isPresent())
             throw new AccountAlreadyExistsException(registerRequest.getEmail() + " Account already exists");
-
+        Optional<UserEntity> usersPhone = findByPhone(registerRequest.getPhone());
+        if(usersPhone.isPresent())
+            throw new PhoneAlreadyExistsException(registerRequest.getPhone() + " phone already exists");
         UserEntity userEntity = registerRequest.toEntity();
 
         userEntity.setPassword(passwordEncoder.encode(registerRequest.getPassword()));

@@ -42,8 +42,10 @@ public class GeneralExceptionHandler {
         return newResponse(e, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(AccountAlreadyExistsException.class)
-    public ResponseEntity<?> handleAccountAlreadtExistsException(Exception e){
+    @ExceptionHandler({
+            AccountAlreadyExistsException.class,
+            PhoneAlreadyExistsException.class})
+    public ResponseEntity<?> handleUsersAlreadtExistsException(Exception e){
         return newResponse(e, HttpStatus.CONFLICT);
     }
 
