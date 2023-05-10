@@ -5,10 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,25 +19,35 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long seq;
 
+    @Column(name = "name")
     private String name;
 
-    private String birth;
+    @Column(name = "birth")
+    private LocalDate birth;
 
+    @Column(name = "email")
     private String email;
 
-    private String phone;
-
+    @Column(name = "addr")
     private String addr;
 
+    @Column(name = "extra_addr")
     private String extraAddr;
 
+    @Column(name = "postcode")
     private String postcode;
 
-    private String password;
+    @Column(name = "phone")
+    private String phone;
 
-    private LocalDateTime lastLoginAt;
+    @Column(name = "point")
+    private Long point;
 
+    @Column(name = "create_at")
     private LocalDateTime createAt;
+
+    @Column(name = "password")
+    private String password;
 
 
 }

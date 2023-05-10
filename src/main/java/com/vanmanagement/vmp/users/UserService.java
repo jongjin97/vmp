@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.util.Optional;
 
 @Service
@@ -43,6 +44,17 @@ public class UserService {
     @Transactional(readOnly = true)
     public Optional<UserEntity> findByPhone(String phone) {
         return userRepository.findByPhone(phone);
+    }
+
+    @Transactional
+    public Optional<UserEntity> updateUserPoint(Long id, String point) throws AccountNotFoundException {
+        Optional<UserEntity> findedUser = findById(id);
+        if(findedUser.isEmpty())
+            throw new AccountNotFoundException("Account not found");
+        long currPoint = findedUser.get().getPoint();
+        findedUser.get().setPoint(currPoint+ Long.parseLong(point));
+
+        return findedUser;
     }
 
     @Transactional

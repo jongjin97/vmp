@@ -3,6 +3,7 @@ package com.vanmanagement.vmp.configure;
 import com.vanmanagement.vmp.security.Jwt;
 import com.vanmanagement.vmp.security.JwtAuthenticationProvider;
 import com.vanmanagement.vmp.security.JwtAuthenticationTokenFilter;
+import com.vanmanagement.vmp.users.Role;
 import com.vanmanagement.vmp.users.UserService;
 import org.apache.catalina.filters.RequestFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -86,6 +87,7 @@ public class WebSecurityConfigure{
                 .authorizeRequests()
 //                .antMatchers("/api/users/login").permitAll()
 //                .antMatchers("/api/products/**").permitAll()
+                .antMatchers("/api/users/point").hasRole(Role.USER.name())
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()

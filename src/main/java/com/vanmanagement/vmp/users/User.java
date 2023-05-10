@@ -6,66 +6,46 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.time.LocalDateTime.now;
-import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-
     private Long seq;
-
     private String name;
 
     private String email;
 
-    private int loginCount;
+    private String addr;
 
-    private LocalDateTime lastLoginAt;
+    private String postcode;
+
+    private String phone;
+
+    private Long point;
 
     private LocalDateTime createAt;
-
-    public User(String name, String email, String password) {
-        this(null, name, email, password, 0, null, null);
-    }
-
-    public User(Long seq, String name, String email, String password, int loginCount, LocalDateTime lastLoginAt, LocalDateTime createAt) {
-
-        this.seq = seq;
-        this.name = name;
-        this.email = email;
-        this.loginCount = loginCount;
-        this.lastLoginAt = lastLoginAt;
-        this.createAt = defaultIfNull(createAt, now());
-    }
 
     public User(UserEntity userEntity) {
         this.seq = userEntity.getSeq();
         this.email = userEntity.getEmail();
         this.name = userEntity.getName();
-        this.lastLoginAt = userEntity.getLastLoginAt();
+        this.addr = userEntity.getAddr();
+        this.phone = userEntity.getPhone();
+        this.point = userEntity.getPoint();
         this.createAt = userEntity.getCreateAt();
     }
 
     public String newJwt(Jwt jwt, String[] roles) {
         Jwt.Claims claims = Jwt.Claims.of(seq, name, roles);
         return jwt.create(claims);
-    }
-
-    public void afterLoginSuccess() {
-        loginCount++;
-        lastLoginAt = now();
     }
 
 
@@ -88,8 +68,6 @@ public class User {
                 .append("seq", seq)
                 .append("name", name)
                 .append("email", email)
-                .append("loginCount", loginCount)
-                .append("lastLoginAt", lastLoginAt)
                 .append("createAt", createAt)
                 .toString();
     }

@@ -8,7 +8,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static com.google.common.base.Preconditions.checkArgument;
 @Data
@@ -52,8 +54,10 @@ public class RegisterRequest {
     private String postcode;
 
     UserEntity toEntity(){
-        return UserEntity.builder().email(getEmail())
+        return UserEntity.builder()
+                .email(getEmail())
                 .name(getName())
+                .birth(LocalDate.parse(getBirth(), DateTimeFormatter.ofPattern("yyyyMMdd")))
                 .password(getPassword())
                 .createAt(LocalDateTime.now())
                 .phone(getPhone())
