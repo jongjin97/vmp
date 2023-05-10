@@ -86,7 +86,7 @@ public class WebSecurityConfigure{
                 .and()
                 .authorizeRequests()
 //                .antMatchers("/api/users/login").permitAll()
-//                .antMatchers("/api/products/**").permitAll()
+                .antMatchers("/api/payment/**").hasRole(Role.USER.name())
                 .antMatchers("/api/users/point").hasRole(Role.USER.name())
                 .anyRequest().permitAll()
                 .and()

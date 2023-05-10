@@ -3,6 +3,10 @@ package com.vanmanagement.vmp.users;
 import com.vanmanagement.vmp.errors.AccountAlreadyExistsException;
 import com.vanmanagement.vmp.errors.NotFoundException;
 import com.vanmanagement.vmp.errors.PhoneAlreadyExistsException;
+import com.vanmanagement.vmp.payment.Payment;
+import com.vanmanagement.vmp.payment.PaymentEntity;
+import com.vanmanagement.vmp.payment.PaymentRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +20,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserService(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository) {
+    private final PaymentRepository paymentRepository;
+
+    public UserService(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, PaymentRepository paymentRepository) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     @Transactional
@@ -47,14 +54,17 @@ public class UserService {
     }
 
     @Transactional
-    public Optional<UserEntity> updateUserPoint(Long id, String point) throws AccountNotFoundException {
-        Optional<UserEntity> findedUser = findById(id);
-        if(findedUser.isEmpty())
-            throw new AccountNotFoundException("Account not found");
-        long currPoint = findedUser.get().getPoint();
-        findedUser.get().setPoint(currPoint+ Long.parseLong(point));
+    public Optional<UserEntity> updateUserPoint(Long id, String point, Payment payment) throws AccountNotFoundException {
+        ModelMapper modelMapper = new ModelMapper();
+        UserEntity userEntity = userRepository.findById(id)
+                .orElseThrow(() -> new AccountNotFoundException("Could not found user for " + id));
+        long currPoint = userEntity.getPoint();
+        userEntity.setPoint(currPoint+ Long.parseLong(point));
+        PaymentEntity paymentEntity = modelMapper.map(payment, PaymentEntity.class);
+        paymentEntity.setUser(userEntity);
+        paymentRepository.save(paymentEntity);
 
-        return findedUser;
+        return Optional.of(userEntity);
     }
 
     @Transactional

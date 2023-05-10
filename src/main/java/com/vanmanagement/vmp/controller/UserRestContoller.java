@@ -1,6 +1,7 @@
 package com.vanmanagement.vmp.controller;
 
 import com.vanmanagement.vmp.errors.UnauthorizedException;
+import com.vanmanagement.vmp.payment.Payment;
 import com.vanmanagement.vmp.security.Jwt;
 import com.vanmanagement.vmp.security.JwtAuthentication;
 import com.vanmanagement.vmp.security.JwtAuthenticationToken;
@@ -81,9 +82,10 @@ public class UserRestContoller {
     }
 
     @PostMapping(value = "/point/{point}")
-    public ApiResult<UserResponse> PurchasePoint(@PathVariable String point,
-                                @AuthenticationPrincipal JwtAuthentication authentication) throws AccountNotFoundException {
-        UserResponse userResponse = userService.updateUserPoint(authentication.id, point)
+    public ApiResult<UserResponse> PurchasePoint(@PathVariable String point
+            , @AuthenticationPrincipal JwtAuthentication authentication
+            , @RequestBody Payment payment) throws AccountNotFoundException {
+        UserResponse userResponse = userService.updateUserPoint(authentication.id, point, payment)
                 .map(userEntity -> UserResponse.builder()
                         .email(userEntity.getEmail())
                         .name(userEntity.getName())
