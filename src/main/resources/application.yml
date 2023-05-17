@@ -29,4 +29,5 @@ jwt:
     header: Authorization
     issuer: vanmanager
     client-secret: Rel3Bjce2MajBo09qgkNgYaTuzvJe8iwnBFhsDS5
-    expiry-seconds: 86400
+    expiry-seconds: 3600000
+    refresh-expiry-Seconds: 86400000

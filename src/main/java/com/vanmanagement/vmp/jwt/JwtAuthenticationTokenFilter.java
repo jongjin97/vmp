@@ -1,5 +1,6 @@
-package com.vanmanagement.vmp.security;
+package com.vanmanagement.vmp.jwt;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,6 +37,7 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
 
     private final Jwt jwt;
 
+
     public JwtAuthenticationTokenFilter(String headerKey, Jwt jwt) {
         this.headerKey = headerKey;
         this.jwt = jwt;
@@ -65,7 +67,11 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
-                } catch (Exception e) {
+                }
+//                } catch (JWTVerificationException e){
+//                    log.warn("Access Token is expired: {}", e.getMessage());
+//                }
+                catch (Exception e) {
                     log.warn("Jwt processing failed: {}", e.getMessage());
                 }
             }

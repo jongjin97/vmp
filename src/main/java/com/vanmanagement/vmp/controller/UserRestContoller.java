@@ -1,14 +1,13 @@
 package com.vanmanagement.vmp.controller;
 
 import com.vanmanagement.vmp.errors.UnauthorizedException;
+import com.vanmanagement.vmp.jwt.UserTokenDto;
 import com.vanmanagement.vmp.payment.Payment;
-import com.vanmanagement.vmp.security.Jwt;
-import com.vanmanagement.vmp.security.JwtAuthentication;
-import com.vanmanagement.vmp.security.JwtAuthenticationToken;
+import com.vanmanagement.vmp.jwt.Jwt;
+import com.vanmanagement.vmp.jwt.JwtAuthentication;
+import com.vanmanagement.vmp.jwt.JwtAuthenticationToken;
 import com.vanmanagement.vmp.users.*;
-import com.vanmanagement.vmp.utils.ApiUtils;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -30,14 +29,8 @@ public class UserRestContoller {
 
     private final UserService userService;
 
-    private final Jwt jwt;
-
-    private final AuthenticationManager authenticationManager;
-
-    public UserRestContoller(UserService userService, Jwt jwt, AuthenticationManager authenticationManager) {
+    public UserRestContoller(UserService userService) {
         this.userService = userService;
-        this.jwt = jwt;
-        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/signup")
@@ -59,21 +52,10 @@ public class UserRestContoller {
                        HttpServletResponse response){
         try {
             ModelMapper modelMapper = new ModelMapper();
-            UserEntity userEntity = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+            UserTokenDto userTokenDto = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+            User user = modelMapper.map(userTokenDto.getUserEntity(), User.class);
 
-            Authentication authentication = authenticationManager.authenticate(
-                    new JwtAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
-            );
-
-            User user = modelMapper.map((UserEntity) authentication.getDetails(), User.class);
-
-            final String token = user.newJwt(
-                    jwt,
-                    authentication.getAuthorities().stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .toArray(String[]::new)
-            );
-            response.setHeader("Authorization", "Bearer " + token);
+            response.setHeader("Authorization", "Bearer " + userTokenDto.getToken());
             UserResponse userResponse = modelMapper.map(user, UserResponse.class);
             return success(userResponse);
         } catch (AuthenticationException e) {
@@ -81,11 +63,10 @@ public class UserRestContoller {
         }
     }
 
-    @PostMapping(value = "/point/{point}")
-    public ApiResult<UserResponse> PurchasePoint(@PathVariable String point
-            , @AuthenticationPrincipal JwtAuthentication authentication
+    @PostMapping(value = "/point")
+    public ApiResult<UserResponse> PurchasePoint(@AuthenticationPrincipal JwtAuthentication authentication
             , @RequestBody Payment payment) throws AccountNotFoundException {
-        UserResponse userResponse = userService.updateUserPoint(authentication.id, point, payment)
+        UserResponse userResponse = userService.updateUserPoint(authentication.id, payment)
                 .map(userEntity -> UserResponse.builder()
                         .email(userEntity.getEmail())
                         .name(userEntity.getName())

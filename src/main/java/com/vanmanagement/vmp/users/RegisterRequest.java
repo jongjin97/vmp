@@ -43,15 +43,15 @@ public class RegisterRequest {
     @NotBlank(message = "phone must be provided")
     private String phone;
 
-    @NotNull(message = "addr must be not null")
-    @NotBlank(message = "addr must be provided")
-    private String addr;
-
-    private String extraAddr;
-
-    @NotNull(message = "postcode must be not null")
-    @NotBlank(message = "postcode must be provided")
-    private String postcode;
+//    @NotNull(message = "addr must be not null")
+//    @NotBlank(message = "addr must be provided")
+//    private String addr;
+//
+//    private String extraAddr;
+//
+//    @NotNull(message = "postcode must be not null")
+//    @NotBlank(message = "postcode must be provided")
+//    private String postcode;
 
     UserEntity toEntity(){
         return UserEntity.builder()
@@ -61,9 +61,9 @@ public class RegisterRequest {
                 .password(getPassword())
                 .createAt(LocalDateTime.now())
                 .phone(getPhone())
-                .addr(getAddr())
-                .extraAddr(getExtraAddr())
-                .postcode(getPostcode())
+//                .addr(getAddr())
+//                .extraAddr(getExtraAddr())
+//                .postcode(getPostcode())
                 .build();
     }
 }

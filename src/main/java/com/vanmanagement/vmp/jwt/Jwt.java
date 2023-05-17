@@ -1,4 +1,4 @@
-package com.vanmanagement.vmp.security;
+package com.vanmanagement.vmp.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
@@ -21,14 +21,17 @@ public final class Jwt {
 
     private final int expirySeconds;
 
+    private final int refreshExpirySeconds;
+
     private final Algorithm algorithm;
 
     private final JWTVerifier jwtVerifier;
 
-    public Jwt(String issuer, String clientSecret, int expirySeconds) {
+    public Jwt(String issuer, String clientSecret, int expirySeconds, int refreshExpirySeconds) {
         this.issuer = issuer;
         this.clientSecret = clientSecret;
         this.expirySeconds = expirySeconds;
+        this.refreshExpirySeconds = refreshExpirySeconds;
         this.algorithm = Algorithm.HMAC512(clientSecret);
         this.jwtVerifier = JWT.require(algorithm)
                 .withIssuer(issuer)
@@ -41,14 +44,24 @@ public final class Jwt {
         builder.withIssuer(issuer);
         builder.withIssuedAt(now);
         if (expirySeconds > 0) {
-            builder.withExpiresAt(new Date(now.getTime() + expirySeconds * 1_000L));
+            builder.withExpiresAt(new Date(now.getTime() + expirySeconds));
         }
         builder.withClaim("userKey", claims.userKey);
         builder.withClaim("name", claims.name);
         builder.withArrayClaim("roles", claims.roles);
         return builder.sign(algorithm);
     }
-
+    public String createReftesh() {
+        Date now = new Date();
+        JWTCreator.Builder builder = com.auth0.jwt.JWT.create();
+        builder.withIssuer(issuer);
+        builder.withIssuedAt(now);
+        // Refresh Token 생성
+        if (refreshExpirySeconds > 0) {
+            builder.withExpiresAt(new Date(now.getTime() + refreshExpirySeconds * 1_000L));
+        }
+        return builder.sign(algorithm);
+    }
     public Claims verify(String token) throws JWTVerificationException {
         return new Claims(jwtVerifier.verify(token));
     }
@@ -71,6 +84,10 @@ public final class Jwt {
 
     public JWTVerifier getJwtVerifier() {
         return jwtVerifier;
+    }
+
+    public int getRefreshExpirySeconds() {
+        return refreshExpirySeconds;
     }
 
     static public class Claims {

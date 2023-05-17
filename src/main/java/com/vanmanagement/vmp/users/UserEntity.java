@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "seq")
     private Long seq;
 
     @Column(name = "name")
@@ -49,5 +51,7 @@ public class UserEntity {
     @Column(name = "password")
     private String password;
 
-
+    @Column(name = "role")
+    @ColumnDefault("ROLE_USER")
+    private String role;
 }

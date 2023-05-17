@@ -1,6 +1,6 @@
 package com.vanmanagement.vmp.users;
 
-import com.vanmanagement.vmp.security.Jwt;
+import com.vanmanagement.vmp.jwt.Jwt;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,6 +32,8 @@ public class User {
     private Long point;
 
     private LocalDateTime createAt;
+
+    private String role;
 
     public User(UserEntity userEntity) {
         this.seq = userEntity.getSeq();

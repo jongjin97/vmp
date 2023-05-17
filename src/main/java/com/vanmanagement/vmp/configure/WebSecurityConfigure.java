@@ -1,15 +1,13 @@
 package com.vanmanagement.vmp.configure;
 
-import com.vanmanagement.vmp.security.Jwt;
-import com.vanmanagement.vmp.security.JwtAuthenticationProvider;
-import com.vanmanagement.vmp.security.JwtAuthenticationTokenFilter;
+import com.vanmanagement.vmp.jwt.Jwt;
+import com.vanmanagement.vmp.jwt.JwtAuthenticationProvider;
+import com.vanmanagement.vmp.jwt.JwtAuthenticationTokenFilter;
+import com.vanmanagement.vmp.jwt.TokenInterceptor;
 import com.vanmanagement.vmp.users.Role;
 import com.vanmanagement.vmp.users.UserService;
-import org.apache.catalina.filters.RequestFilter;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,27 +19,26 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfigure{
+public class WebSecurityConfigure implements WebMvcConfigurer {
 
     private final Jwt jwt;
-
+    private final TokenInterceptor tokenInterceptor;
     private final JwtTokenConfigure jwtTokenConfigure;
 
-    public WebSecurityConfigure(Jwt jwt, JwtTokenConfigure jwtTokenConfigure) {
+    public WebSecurityConfigure(Jwt jwt, TokenInterceptor tokenInterceptor, JwtTokenConfigure jwtTokenConfigure) {
         this.jwt = jwt;
+        this.tokenInterceptor = tokenInterceptor;
         this.jwtTokenConfigure = jwtTokenConfigure;
     }
     @Bean
@@ -57,12 +54,10 @@ public class WebSecurityConfigure{
     public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter() {
         return new JwtAuthenticationTokenFilter(jwtTokenConfigure.getHeader(), jwt);
     }
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
     @Bean
     public JwtAuthenticationProvider jwtAuthenticationProvider(UserService userService) {
         return new JwtAuthenticationProvider(userService);
@@ -86,6 +81,7 @@ public class WebSecurityConfigure{
                 .and()
                 .authorizeRequests()
 //                .antMatchers("/api/users/login").permitAll()
+//                .antMatchers("/api/token/**").hasRole(Role.USER.name())
                 .antMatchers("/api/payment/**").hasRole(Role.USER.name())
                 .antMatchers("/api/users/point").hasRole(Role.USER.name())
                 .anyRequest().permitAll()
@@ -102,6 +98,12 @@ public class WebSecurityConfigure{
         return (web) -> web.ignoring().antMatchers("/WEB-INF/**", "/static/**", "/templates/**", "/h2/**");
     }
 
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(tokenInterceptor)
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/users/login", "/api/users/signup");
+    }
 
     @Bean
     public CorsRegistry corsRegistry(){

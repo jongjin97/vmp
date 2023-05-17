@@ -11,15 +11,13 @@ import static com.vanmanagement.vmp.utils.ApiUtils.success;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping("/certifications")
+@RequestMapping("/api/certifications")
 public class CertificationController {
     private final IamportService iamportService;
 
-    private final UserService userService;
 
-    public CertificationController(IamportService iamportService, UserService userService) {
+    public CertificationController(IamportService iamportService) {
         this.iamportService = iamportService;
-        this.userService = userService;
     }
 
     @PostMapping("/{impUid}")

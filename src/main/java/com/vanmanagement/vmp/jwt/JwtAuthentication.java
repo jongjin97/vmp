@@ -1,4 +1,4 @@
-package com.vanmanagement.vmp.security;
+package com.vanmanagement.vmp.jwt;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

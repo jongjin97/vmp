@@ -17,6 +17,8 @@ public class JwtTokenConfigure {
 
     private int expirySeconds;
 
+    private int refreshExpirySeconds;
+
     public String getHeader() {
         return header;
     }
@@ -47,6 +49,14 @@ public class JwtTokenConfigure {
 
     public void setExpirySeconds(int expirySeconds) {
         this.expirySeconds = expirySeconds;
+    }
+
+    public int getRefreshExpirySeconds() {
+        return refreshExpirySeconds;
+    }
+
+    public void setRefreshExpirySeconds(int refreshExpirySeconds) {
+        this.refreshExpirySeconds = refreshExpirySeconds;
     }
 
     @Override

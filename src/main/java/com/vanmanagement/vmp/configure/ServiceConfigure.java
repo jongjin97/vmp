@@ -1,8 +1,7 @@
 package com.vanmanagement.vmp.configure;
 
 
-import com.auth0.jwt.JWT;
-import com.vanmanagement.vmp.security.Jwt;
+import com.vanmanagement.vmp.jwt.Jwt;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,6 +12,7 @@ public class ServiceConfigure {
     public Jwt jwt(JwtTokenConfigure jwtTokenConfigure) {
         return new Jwt(jwtTokenConfigure.getIssuer(),
                 jwtTokenConfigure.getClientSecret()
-                , jwtTokenConfigure.getExpirySeconds());
+                , jwtTokenConfigure.getExpirySeconds()
+                , jwtTokenConfigure.getRefreshExpirySeconds());
     }
 }
