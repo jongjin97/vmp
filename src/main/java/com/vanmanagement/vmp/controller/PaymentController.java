@@ -34,4 +34,9 @@ public class PaymentController {
 
         return success(paymentResponse);
     }
+
+    @PostMapping(value = "test")
+    public String test(){
+        return "s";
+    }
 }

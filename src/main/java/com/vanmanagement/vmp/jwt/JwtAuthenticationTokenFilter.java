@@ -68,9 +68,9 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
                 }
-//                } catch (JWTVerificationException e){
-//                    log.warn("Access Token is expired: {}", e.getMessage());
-//                }
+                catch (JWTVerificationException e){
+                    log.warn("Access Token is expired: {}", e.getMessage());
+                }
                 catch (Exception e) {
                     log.warn("Jwt processing failed: {}", e.getMessage());
                 }

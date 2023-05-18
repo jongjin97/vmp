@@ -101,8 +101,7 @@ public class WebSecurityConfigure implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(tokenInterceptor)
-                .addPathPatterns("/api/**")
-                .excludePathPatterns("/api/users/login", "/api/users/signup");
+                .addPathPatterns("/api/token");
     }
 
     @Bean

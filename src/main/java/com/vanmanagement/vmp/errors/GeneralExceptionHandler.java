@@ -1,5 +1,6 @@
 package com.vanmanagement.vmp.errors;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.vanmanagement.vmp.utils.ApiUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,10 @@ public class GeneralExceptionHandler {
             PhoneAlreadyExistsException.class})
     public ResponseEntity<?> handleUsersAlreadtExistsException(Exception e){
         return newResponse(e, HttpStatus.CONFLICT);
+    }
+    @ExceptionHandler(JWTVerificationException.class)
+    public ResponseEntity<?> handleJWTVerificationException(Exception e){
+        return newResponse(e, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
